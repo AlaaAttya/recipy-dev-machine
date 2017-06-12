@@ -1,0 +1,10 @@
+version: '0.0.1'
+
+services:
+  revel-web-server:
+    container_name: dev-go
+    image: ysaotome/docker-go-revel-dev
+    volumes:
+      - ~/mine/recipy-api:/root/go/src/dev
+    ports:
+      - 8080:80
