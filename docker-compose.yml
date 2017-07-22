@@ -1,10 +1,39 @@
-version: '0.0.1'
+version: '2.1'
 
 services:
-  revel-web-server:
+  app:
     container_name: dev-go
-    image: ysaotome/docker-go-revel-dev
+    image: golang:1.8
     volumes:
-      - ~/mine/recipy-api:/root/go/src/dev
+      - ~/recipy-workspace/recipy-api:/go/src/app
+    working_dir: /go/src/app
+    command: go run main.go
     ports:
-      - 8080:80
+      - 8090:8080  
+    links:
+      - mongo:mongo  
+  mongo:
+    container_name: dev-mongo
+    image: mongo:3.5
+    mem_limit: 1g
+    memswap_limit: 1g
+    cpu_shares: 20
+    ports:
+      - 37017:27017
+      - 38017:28017
+    networks:
+      dev_net:
+        ipv4_address: 10.5.0.21
+    volumes:
+      - ./mongo:/image
+      - ./mongo/files/mongod.conf:/etc/mongod.conf
+      - data-volume:/data/db:rw    
+volumes:
+  data-volume:
+networks:
+  dev_net:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.5.0.0/16
+         gateway: 10.5.0.1    
